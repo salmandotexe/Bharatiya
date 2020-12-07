@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Bharatiya</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoidGhlc2FsbWFuc2FoZWwiLCJhIjoiY2toNHVqNjd4MGZmcDJ4b3Zzdm02bzJlcyJ9.TqZwgHJ7WGvn876yNRN_4w</string>
+    <string name="cur_style_url">mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa</string>
+</resources>
