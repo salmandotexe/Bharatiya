@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
+
+                
                 /*
                     Add markers using this:
                     List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
