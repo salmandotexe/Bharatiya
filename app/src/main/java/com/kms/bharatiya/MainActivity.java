@@ -68,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
+                /*
+                    Add markers using this:
+                    List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
+                    symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                    Point.fromLngLat(-57.225365, -33.213144)));
+                    symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                    Point.fromLngLat(-54.14164, -33.981818)));
+                    symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                    Point.fromLngLat(-56.990533, -30.583266)));
+
+                 */
+
                 mapboxMap.setStyle(new Style.Builder().fromUri(curstl), new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
