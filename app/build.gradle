@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -29,6 +30,7 @@ android {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:26.2.0')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -40,5 +42,12 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.5.0'
     //search
     implementation "com.mapbox.search:mapbox-search-android-ui:1.0.0-beta.1"
+    //Firebase
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth:9.0.2'
+    implementation 'com.google.firebase:firebase-core:9.2.0'
+    implementation 'com.google.firebase:firebase-database:16.0.4'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    implementation 'com.google.firebase:firebase-auth:20.0.1'
 
 }
