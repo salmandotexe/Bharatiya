@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "932599975849",
+    "project_id": "bharatia-97613",
+    "storage_bucket": "bharatia-97613.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932599975849:android:31c8e3149047af6a2cfeb8",
+        "android_client_info": {
+          "package_name": "com.kms.bharatiya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "932599975849-3ubf91judspjcv3t9cdih59ophd6f136.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kms.bharatiya",
+            "certificate_hash": "ec18f41ac66efc9cca532848e10567331d3def0d"
+          }
+        },
+        {
+          "client_id": "932599975849-e8rjo3f9037a4nc9l6ss27d4pphi5s20.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNMdDdsg1HCb75cc2a-G9CgjwZvdFQS5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "932599975849-e8rjo3f9037a4nc9l6ss27d4pphi5s20.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
