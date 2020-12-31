@@ -1,5 +1,6 @@
 package com.kms.bharatiya;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.GeoJson;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -28,6 +30,8 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -50,33 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
 
 
-    private void getHouseCoordinates(){
-        //Get Houses collection from db
-        db.collection("Houses")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot doc:task.getResult()){
-                                //GeoPoint cur= doc.getGeoPoint("LatLong");
-                                //Log.d("LATLONG",cur.getLongitude() + "" + cur.getLatitude());
-                                //HouseList.add(Feature.fromGeometry(
-                                //                    Point.fromLngLat(90.414208, 23.779395)));
-                            }
-                        }
-                        else{
-                            Log.d("Dbgeterror", String.valueOf(task.getException()));
-                        }
-                    }
-                });
-        //get lat,long
-
-        //HouseList.add(Feature.fromGeometry(
-        //                    Point.fromLngLat(90.414208, 23.779395)));
-    }
     @Override
     protected void onStart() {
+
         super.onStart();
         mapView.onStart();
     }
@@ -119,55 +99,55 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
 
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-
         mapView.getMapAsync(new OnMapReadyCallback() {
 
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                HouseList.add(Feature.fromGeometry(
-                    Point.fromLngLat(90.414208, 23.779395)));    //Three points in Gulshan-1
-                HouseList.add(Feature.fromGeometry(
-                    Point.fromLngLat(90.416990, 23.778934)));
-                HouseList.add(Feature.fromGeometry(
-                    Point.fromLngLat(90.417402,23.781153)));
+                //function here that loads the Lat/Long from the Database and adds to HouseList.
+                db.collection("Houses")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()){
+                                for(QueryDocumentSnapshot doc:task.getResult()){
+                                    GeoPoint cur= doc.getGeoPoint("LatLong");
+                                    Log.d("LATLONG",cur.getLongitude() + " " + cur.getLatitude());
+                                    HouseList.add(Feature.fromGeometry(Point.fromLngLat(cur.getLongitude(),cur.getLatitude())));
+                                }
+                                mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
+                                    //Note: Icons are added on a separate layer, as an overlay above the map.
 
-                //TODO: Use a getCoordinates() function here that loads the Lat/Long from the Database and adds to HouseList.
-                //getHouseCoordinates();
-                mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
-                //Note: Icons are added on a separate layer, as an overlay above the map.
+                                    //Add icon image for marker. DO NOT CHANGE ICON_ID at the moment.
+                                    .withImage(ICON_ID, BitmapFactory.decodeResource( MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default))
 
-                //Add icon image for marker. DO NOT CHANGE ICON_ID at the moment.
-                .withImage(ICON_ID, BitmapFactory.decodeResource( MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default))
+                                    //Place the marker icons above the houses for rent, GeoJson translates lat long into map coordinates.
+                                    .withSource(new GeoJsonSource(SOURCE_ID, FeatureCollection.fromFeatures(HouseList)))
 
-                //Place the marker icons above the houses for rent, GeoJson translates lat long into map coordinates.
-                .withSource(new GeoJsonSource(SOURCE_ID, FeatureCollection.fromFeatures(HouseList)))
+                                    // Creating the actual Layer as overlay, and adding an offset to the icon so the marker arrow points at the house.
 
-                // Creating the actual Layer as overlay, and adding an offset to the icon so the marker arrow points at the house.
+                                    .withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
+                                        .withProperties(iconImage(ICON_ID), iconAllowOverlap(true), iconIgnorePlacement(true))),
 
-                .withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
-                    .withProperties(
-                        iconImage(ICON_ID),
-                        iconAllowOverlap(true),
-                        iconIgnorePlacement(true)
-                    )
-                ),
+                                            new Style.OnStyleLoaded() {
+                                                @Override
+                                                public void onStyleLoaded(@NonNull Style style) {
 
-                new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-
-                    }
-                });
-
-
-
+                                                }
+                                            }
+                                    );
+                                }
+                                else{
+                                    Log.d("Dbgeterror", String.valueOf(task.getException()));
+                                }
+                            }
+                        });
             }
         });
 
