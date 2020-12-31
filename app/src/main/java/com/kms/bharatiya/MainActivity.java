@@ -1,31 +1,42 @@
 package com.kms.bharatiya;
 
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.maps.*;
-
-//Additional imports for Markers:
-
-import android.graphics.BitmapFactory;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
-//import com.mapbox.mapboxandroiddemo.R; not found
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
-
-
+//Additional imports for Markers:
+//import com.mapbox.mapboxandroiddemo.R; not found
+//imports for Firestore database:
 //Java imports:
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
@@ -36,6 +47,34 @@ public class MainActivity extends AppCompatActivity {
     private static final String ICON_ID = "ICON_ID";
     private static final String LAYER_ID = "LAYER_ID";
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
+    private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
+
+
+    private void getHouseCoordinates(){
+        //Get Houses collection from db
+        db.collection("Houses")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot doc:task.getResult()){
+                                //GeoPoint cur= doc.getGeoPoint("LatLong");
+                                //Log.d("LATLONG",cur.getLongitude() + "" + cur.getLatitude());
+                                //HouseList.add(Feature.fromGeometry(
+                                //                    Point.fromLngLat(90.414208, 23.779395)));
+                            }
+                        }
+                        else{
+                            Log.d("Dbgeterror", String.valueOf(task.getException()));
+                        }
+                    }
+                });
+        //get lat,long
+
+        //HouseList.add(Feature.fromGeometry(
+        //                    Point.fromLngLat(90.414208, 23.779395)));
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -100,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     Point.fromLngLat(90.417402,23.781153)));
 
                 //TODO: Use a getCoordinates() function here that loads the Lat/Long from the Database and adds to HouseList.
-
+                //getHouseCoordinates();
                 mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
                 //Note: Icons are added on a separate layer, as an overlay above the map.
 
