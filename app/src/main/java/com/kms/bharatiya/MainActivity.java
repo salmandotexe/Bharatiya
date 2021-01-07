@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
@@ -45,7 +47,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 public class MainActivity extends AppCompatActivity {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
     private MapView mapView;
-
+    public FloatingActionButton ft;
     //For icons of map markers
     private static final String SOURCE_ID = "SOURCE_ID";
     private static final String ICON_ID = "ICON_ID";
@@ -102,7 +104,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
+        ft = findViewById(R.id.floatingActionButton);
 
+       ft.setOnClickListener(new View.OnClickListener(){
+
+           @Override
+           public void onClick(View v) {
+               Intent i = new Intent(MainActivity.this, Registration.class);
+
+               startActivity(i);
+           }
+       });
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {

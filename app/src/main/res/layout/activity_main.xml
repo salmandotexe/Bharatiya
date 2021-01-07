@@ -13,7 +13,19 @@
         mapbox:mapbox_cameraTargetLng="90.4125"
         mapbox:mapbox_cameraZoom="12"
         tools:layout_editor_absoluteX="0dp">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
 
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            mapbox:srcCompat="@drawable/ic_register_foreground"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="50dp"
+            android:layout_marginRight="10dp"
+
+
+            />
     </com.mapbox.mapboxsdk.maps.MapView>
 
 
