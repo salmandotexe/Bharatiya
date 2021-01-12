@@ -105,16 +105,16 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
         ft = findViewById(R.id.floatingActionButton);
+        ft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, RegistrationV2.class);
 
-       ft.setOnClickListener(new View.OnClickListener(){
+                startActivity(i);
+            }
+        });
 
-           @Override
-           public void onClick(View v) {
-               Intent i = new Intent(MainActivity.this, Registration.class);
 
-               startActivity(i);
-           }
-       });
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {

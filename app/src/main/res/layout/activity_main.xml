@@ -19,10 +19,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            mapbox:srcCompat="@drawable/ic_register_foreground"
+            mapbox:srcCompat="@drawable/ic_register4_foreground"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="50dp"
             android:layout_marginRight="10dp"
+
 
 
             />
