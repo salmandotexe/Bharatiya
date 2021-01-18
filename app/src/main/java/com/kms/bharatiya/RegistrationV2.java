@@ -62,8 +62,8 @@ public class RegistrationV2 extends AppCompatActivity {
                 conref6.setValue(nbed);
                 conref7 = rootref1.child("Bathroom");
                 conref7.setValue(nbath);
-                Intent i = new Intent(RegistrationV2.this, MainActivity.class);
 
+                Intent i = new Intent(RegistrationV2.this, MainActivity.class);
                 startActivity(i);
 
 
