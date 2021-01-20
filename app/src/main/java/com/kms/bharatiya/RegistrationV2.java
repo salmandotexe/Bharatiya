@@ -1,5 +1,6 @@
 package com.kms.bharatiya;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,18 +11,32 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegistrationV2 extends AppCompatActivity {
     private EditText house_area, housenum, roadnum, flatsize, floorr, bed, bath;
     private ImageButton upload, takepic;
     private Button registerbutton;
     private TextView regi, disclaimer;
+    public int j;
+    public  String text;
+    public  String num;
+    public  String num2;
+    public float lat ;
+    public float lon;
+
 
 
     DatabaseReference rootref = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference rootref1 =rootref.child("add");
+    DatabaseReference rootref2 =rootref.child("House");
+    DatabaseReference rootref1;
+
+    DatabaseReference myref = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference rootref4= myref.child("Hcount");
 
     DatabaseReference conref1;
     DatabaseReference conref2;
@@ -30,24 +45,70 @@ public class RegistrationV2 extends AppCompatActivity {
     DatabaseReference conref5;
     DatabaseReference conref6;
     DatabaseReference conref7;
+    DatabaseReference conref8;
+    DatabaseReference conref9;
+    String harea ;
+    String hnum ;
+    String rnum;
+    String fsize;
+    String floor;
+    String nbed ;
+    String nbath ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_v2);
-        setupUIViews();
-        String harea = house_area.getText().toString();
-        String hnum = housenum.getText().toString();
-        String rnum = roadnum.getText().toString();
-        String fsize = flatsize.getText().toString();
-        String floor = floorr.getText().toString();
-        String nbed = bed.getText().toString();
-        String nbath = bath.getText().toString();
+        house_area= findViewById(R.id.area);
+        housenum= findViewById(R.id.house_num);
+        roadnum= findViewById(R.id.road_num);
+        flatsize= findViewById(R.id.flat_size);
+        floorr= findViewById(R.id.floor);
+        bed= findViewById(R.id.bedroom);
+        bath= findViewById(R.id.bathroom);
+        upload=  findViewById(R.id.imageButton3);
+        takepic=  findViewById(R.id.imageButton4);
+        registerbutton=findViewById(R.id.register);
+        regi=  findViewById(R.id.reg);
+        disclaimer= findViewById(R.id.textView4);
+
+        rootref4.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                text = dataSnapshot.getValue(String.class);
+
+                j=Integer.parseInt(text);
+                j=j+1;
+                text=Integer.toString(j);
+                num=text;
+                num2=num;
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         registerbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                harea = house_area.getText().toString();
+                hnum = housenum.getText().toString();
+                rnum = roadnum.getText().toString();
+                fsize = flatsize.getText().toString();
+                floor = floorr.getText().toString();
+                nbed = bed.getText().toString();
+                nbath = bath.getText().toString();
+                lat = 6.22f;                                 //change lat value
+                lon = 7.55f;                                  //change lon value
+
+
+
+
+                rootref1= rootref2.child(num2);
                 conref1 = rootref1.child("Area");
                 conref1.setValue(harea);
                 conref2 = rootref1.child("House Number ");
@@ -62,6 +123,11 @@ public class RegistrationV2 extends AppCompatActivity {
                 conref6.setValue(nbed);
                 conref7 = rootref1.child("Bathroom");
                 conref7.setValue(nbath);
+                conref8 = rootref1.child("LAT");
+                conref8.setValue(lat);
+                conref9 = rootref1.child("LONG");
+                conref9.setValue(lon);
+                rootref4.setValue(num2);
 
                 Intent i = new Intent(RegistrationV2.this, MainActivity.class);
                 startActivity(i);
@@ -81,22 +147,7 @@ public class RegistrationV2 extends AppCompatActivity {
 
     }
 
-    public void setupUIViews(){
-        house_area= (EditText)findViewById(R.id.area);
-        housenum= (EditText)findViewById(R.id.house_num);
-        roadnum= (EditText)findViewById(R.id.road_num);
-        flatsize= (EditText)findViewById(R.id.flat_size);
-        floorr= (EditText)findViewById(R.id.floor);
-        bed= (EditText)findViewById(R.id.bedroom);
-        bath= (EditText)findViewById(R.id.bathroom);
-        upload= (ImageButton) findViewById(R.id.imageButton3);
-        takepic= (ImageButton) findViewById(R.id.imageButton4);
-        registerbutton= (Button)findViewById(R.id.register);
-        regi= (TextView) findViewById(R.id.reg);
-        disclaimer= (TextView) findViewById(R.id.textView4);
 
-
-    }
     private Boolean validate()
     {
         Boolean result = false;

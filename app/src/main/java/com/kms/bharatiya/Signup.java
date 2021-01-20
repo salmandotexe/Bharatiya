@@ -37,6 +37,8 @@ public class Signup extends AppCompatActivity {
     public String text;
     FirebaseAuth auth;
     DatabaseReference rootref = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference rootref2= rootref.child("Users");
+
     DatabaseReference rootref1;
 
     DatabaseReference myref = FirebaseDatabase.getInstance().getReference();
@@ -128,7 +130,7 @@ public class Signup extends AppCompatActivity {
                         viral3 = add.getText().toString();
 
 
-                        rootref1= rootref.child(num);
+                        rootref1= rootref2.child(num);
 
                         conref1 = rootref1.child("Name");
                         conref1.setValue(viral);
