@@ -65,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
     private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
 
+    private boolean placedHousemarker=false;
+
+
+    public GeoPoint cursor;    //Firestore stores location as geopoint.
+    //just set the location to cursor and you're done.
 
     @Override
     protected void onStart() {
@@ -118,8 +123,13 @@ public class MainActivity extends AppCompatActivity {
         ft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, RegistrationV2.class);
-                startActivity(i);
+                if(!placedHousemarker){
+                    Toast.makeText(MainActivity.this,"Please place Marker on map first.", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Intent i = new Intent(MainActivity.this, RegistrationV2.class);
+                    startActivity(i);
+                }
             }
         });
 
@@ -191,9 +201,12 @@ public class MainActivity extends AppCompatActivity {
                 if (!features.isEmpty()) {
                     Log.d("ONCLICK","marker clicked");
                     Feature feature = features.get(0);
-                    
+
                     if(feature.properties().get("Rent")!=null){ //Clicked on a valid marker
                         Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        //place a new marker. set housemarker to true.
                     }
 
 
