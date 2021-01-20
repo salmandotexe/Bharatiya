@@ -14,6 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
@@ -38,6 +43,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -63,13 +69,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String ICON_ID = "ICON_ID";
     private static final String LAYER_ID = "LAYER_ID";
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
-    private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
 
-    private boolean placedHousemarker=true;
+    private List<Feature> cursorft = new ArrayList<>();    //Contains list of houses where markers need to be placed.
+    //private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
+
+    //Firebase realtime DB:
+    DatabaseReference dbroot = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference dbhouses =dbroot.child("House");
+
+    private boolean placedHousemarker=false;
 
 
     public GeoPoint cursor;    //Firestore stores location as geopoint.
-    //just set the location to cursor and you're done.
 
     @Override
     protected void onStart() {
@@ -145,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 loadFromDatabase();
                 addListeners();
             }
-
+            /*
             private void loadFromDatabase(){
                 db.collection("Houses")
                     .get()
@@ -195,23 +206,68 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
             }
+            */
 
+            private void loadFromDatabase(){
+                dbroot.child("House").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Iterator<DataSnapshot> items = dataSnapshot.getChildren().iterator();
+                        while(items.hasNext()){
+                            DataSnapshot item = items.next();
+                            double lat = Double.parseDouble(item.child("LAT").getValue().toString());
+                            double lng = Double.parseDouble(item.child("LONG").getValue().toString());
+                            Log.d("LATLONG",lat + " " + lng);
+                            Feature ft=Feature.fromGeometry(Point.fromLngLat(lng,lat));
+                            ft.properties().addProperty("Area", item.child("Area").getValue().toString()); //Add rent, area, USERID (important)
+                            HouseList.add(ft);
+                        }
+                        mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
+                                        //Note: Icons are added on a separate layer, as an overlay above the map.
+                                        .withImage(ICON_ID, BitmapFactory.decodeResource( MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default))
+
+                                        //Place the marker icons above the houses for rent, GeoJson translates lat long into map coordinates.
+                                        .withSource(new GeoJsonSource(SOURCE_ID, FeatureCollection.fromFeatures(HouseList)))
+
+                                        //Creating the actual Layer as overlay, and adding an offset to the icon so the marker arrow points at the house.
+                                        .withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
+
+                                                .withProperties(iconImage(ICON_ID), iconAllowOverlap(true), iconIgnorePlacement(true))),
+
+                                new Style.OnStyleLoaded() {
+                                    @Override
+                                    public void onStyleLoaded(@NonNull Style style) {
+
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
+            }
             private boolean handleClickIcon(PointF screenPoint) {
                 List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint);
                 if (!features.isEmpty()) {
                     Log.d("ONCLICK","marker clicked");
                     Feature feature = features.get(0);
 
-                    if(feature.properties().get("Rent")!=null){ //Clicked on a valid marker
+                    if(feature.properties().get("Area")!=null){ //Clicked on a valid marker
                         Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
                     }
                     else{
-                        //place a new marker. set housemarker to true.
+
                     }
 
 
                 } else {
                     Log.d("ONCLICK","map clicked");
+                    return false;
                 }
                 return true;
             }
@@ -221,7 +277,17 @@ public class MainActivity extends AppCompatActivity {
                 mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {    //Adds map click event listener.
                     @Override
                     public boolean onMapClick(@NonNull LatLng point) {
-                        return handleClickIcon(mapboxMap.getProjection().toScreenLocation(point));
+                        if (handleClickIcon(mapboxMap.getProjection().toScreenLocation(point))) {
+                            //clicked on some marker
+                        } else {
+                            if (placedHousemarker) {
+                                cursorft.clear();
+                                placedHousemarker = false;
+                            }
+                            placedHousemarker = true;
+
+                        }
+                        return true;
                     }
                 });
 
