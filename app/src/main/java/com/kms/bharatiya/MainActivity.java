@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
     private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
 
-    private boolean placedHousemarker=false;
+    private boolean placedHousemarker=true;
 
 
     public GeoPoint cursor;    //Firestore stores location as geopoint.
