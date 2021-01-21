@@ -21,7 +21,7 @@ public class RegistrationV2 extends AppCompatActivity {
     private EditText house_area, housenum, roadnum, flatsize, floorr, bed, bath;
     private ImageButton upload, takepic;
     private Button registerbutton;
-    private TextView regi, disclaimer;
+    private TextView regi;
     public int j;
     public  String text;
     public  String num;
@@ -70,7 +70,6 @@ public class RegistrationV2 extends AppCompatActivity {
         takepic=  findViewById(R.id.imageButton4);
         registerbutton=findViewById(R.id.register);
         regi=  findViewById(R.id.reg);
-        disclaimer= findViewById(R.id.textView4);
 
         rootref4.addValueEventListener(new ValueEventListener() {
             @Override
@@ -129,20 +128,14 @@ public class RegistrationV2 extends AppCompatActivity {
                 conref9.setValue(lon);
                 rootref4.setValue(num2);
 
-                Intent i = new Intent(RegistrationV2.this, MainActivity.class);
+                Intent i = new Intent(RegistrationV2.this, RegSuccess.class);
                 startActivity(i);
 
 
             }
         });
 
-        disclaimer.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick (View v)
-            {
-                startActivity(new Intent(RegistrationV2.this, MainActivity.class));
-            }
-        });
+
 
 
     }
