@@ -61,6 +61,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 public class MainActivity extends AppCompatActivity {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
+    public static String data;
     private MapView mapView;
     private MapboxMap mapboxMap;
     public FloatingActionButton ft;
@@ -258,7 +259,11 @@ public class MainActivity extends AppCompatActivity {
                     Feature feature = features.get(0);
 
                     if(feature.properties().get("Area")!=null){ //Clicked on a valid marker
-                        Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
+
+                        InterestedDialog dd = new InterestedDialog();
+                        dd.show(getFragmentManager(),"fk");
+
                     }
                     else{
 
