@@ -221,6 +221,10 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("LATLONG",lat + " " + lng);
                             Feature ft=Feature.fromGeometry(Point.fromLngLat(lng,lat));
                             ft.properties().addProperty("Area", item.child("Area").getValue().toString()); //Add rent, area, USERID (important)
+                            ft.properties().addProperty("Flat Size", item.child("Flat Size").getValue().toString());
+                            ft.properties().addProperty("Bedroom", item.child("Bedroom").getValue().toString());
+                            ft.properties().addProperty("Bathroom", item.child("Bathroom").getValue().toString());
+                            ft.properties().addProperty("Road Number", item.child("Road Number").getValue().toString());
                             HouseList.add(ft);
                         }
                         mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
@@ -260,7 +264,30 @@ public class MainActivity extends AppCompatActivity {
 
                     if(feature.properties().get("Area")!=null){ //Clicked on a valid marker
                         //Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
+                        data="";
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Area: ");
+                        sb.append(feature.properties().get("Area").getAsString());
+                        sb.append("\n");
 
+                        sb.append("Bedrooms: ");
+                        sb.append(feature.properties().get("Bedroom").getAsString());
+                        sb.append("\n");
+
+                        sb.append("Bathrooms: ");
+                        sb.append(feature.properties().get("Bathroom").getAsString());
+                        sb.append("\n");
+
+                        sb.append("Road Number: ");
+                        sb.append(feature.properties().get("Road Number").getAsString());
+                        sb.append("\n");
+
+                        sb.append("Flat Size: ");
+                        sb.append(feature.properties().get("Flat Size").getAsString());
+                        sb.append("\n");
+
+                        sb.append("\nAre you Interested?");
+                        data = sb.toString();
                         InterestedDialog dd = new InterestedDialog();
                         dd.show(getFragmentManager(),"fk");
 
