@@ -102,8 +102,8 @@ public class RegistrationV2 extends AppCompatActivity {
                 floor = floorr.getText().toString();
                 nbed = bed.getText().toString();
                 nbath = bath.getText().toString();
-                lat = 6.22;                                 //change lat value
-                lon = 7.55;                                  //change lon value
+                lat = MainActivity.currentPosition.getLatitude();
+                lon = MainActivity.currentPosition.getLongitude();
 
 
 
