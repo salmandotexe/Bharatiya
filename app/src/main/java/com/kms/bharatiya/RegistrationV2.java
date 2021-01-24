@@ -102,10 +102,9 @@ public class RegistrationV2 extends AppCompatActivity {
                 floor = floorr.getText().toString();
                 nbed = bed.getText().toString();
                 nbath = bath.getText().toString();
-                //lat = 6.22;                                 //change lat value
-                //lon = 7.55;                                  //change lon value
-                lat = MainActivity.currentPosition.getLatitude();
-                lon = MainActivity.currentPosition.getLongitude();
+                lat = 6.22;                                 //change lat value
+                lon = 7.55;                                  //change lon value
+
 
 
 
@@ -130,7 +129,7 @@ public class RegistrationV2 extends AppCompatActivity {
                 conref9.setValue(lon);
                 rootref4.setValue(num2);
 
-                Intent i = new Intent(RegistrationV2.this, MainActivity.class);
+                Intent i = new Intent(RegistrationV2.this, RegSuccess.class);
                 startActivity(i);
 
 
@@ -141,7 +140,7 @@ public class RegistrationV2 extends AppCompatActivity {
             @Override
             public void onClick (View v)
             {
-                startActivity(new Intent(RegistrationV2.this, MainActivity.class));
+                startActivity(new Intent(RegistrationV2.this, RegSuccess.class));
             }
         });
 
