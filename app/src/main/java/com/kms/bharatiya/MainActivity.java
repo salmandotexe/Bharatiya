@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String SOURCE_ID = "SOURCE_ID";
     private static final String ICON_ID = "ICON_ID";
     private static final String LAYER_ID = "LAYER_ID";
+
+
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
 
     private List<Feature> cursorft = new ArrayList<>();    //Contains list of houses where markers need to be placed.
@@ -81,7 +83,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean placedHousemarker=false;
 
 
-    public GeoPoint cursor;    //Firestore stores location as geopoint.
+
+    public static LatLng currentPosition = new LatLng(64.900932, -18.167040);
+    private GeoJsonSource gjs;
+
 
     @Override
     protected void onStart() {
@@ -136,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!placedHousemarker){
-                    Toast.makeText(MainActivity.this,"Please place Marker on map first.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,"Please place marker first.", Toast.LENGTH_LONG).show();
                 }
                 else {
                     Intent i = new Intent(MainActivity.this, RegistrationV2.class);
@@ -155,7 +160,10 @@ public class MainActivity extends AppCompatActivity {
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 MainActivity.this.mapboxMap=mapboxMap;
                 loadFromDatabase();
-                addListeners();
+                gjs = new GeoJsonSource("source-id",
+                        Feature.fromGeometry(Point.fromLngLat(currentPosition.getLongitude(),
+                                currentPosition.getLatitude())));
+
             }
             /*
             private void loadFromDatabase(){
@@ -209,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
             }
             */
 
+
             private void loadFromDatabase(){
                 dbroot.child("House").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -242,12 +251,88 @@ public class MainActivity extends AppCompatActivity {
                                 new Style.OnStyleLoaded() {
                                     @Override
                                     public void onStyleLoaded(@NonNull Style style) {
+                                        mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                                            @Override
+                                            public boolean onMapClick(@NonNull LatLng point) {
+                                                if (handleClickIcon(mapboxMap.getProjection().toScreenLocation(point))) {
+                                                    //clicked on some marker.
+                                                    return true;
+                                                }
+                                                else{
+                                                    if(placedHousemarker){
+                                                        style.removeLayer("cursorlayer-id");
+                                                        style.removeSource(gjs);
+                                                        placedHousemarker=false;
+                                                        return false;
+                                                    }
+
+                                                    currentPosition = point;
+                                                    gjs = new GeoJsonSource("source-id",
+                                                            Feature.fromGeometry(Point.fromLngLat(currentPosition.getLongitude(),
+                                                                    currentPosition.getLatitude())));
+                                                    style.addImage(("cursor"), BitmapFactory.decodeResource(
+                                                            getResources(), R.drawable.mapbox_marker_icon_default));
+                                                    style.addSource(gjs);
+                                                    style.addLayer(new SymbolLayer("cursorlayer-id", "source-id")
+                                                            .withProperties(iconImage(ICON_ID), iconAllowOverlap(true), iconIgnorePlacement(true)));
+
+                                                    placedHousemarker=true;
+                                                    return true;
+                                                }
+                                            }
+                                        });
 
                                     }
                                 }
                         );
                     }
+                    private boolean handleClickIcon(PointF screenPoint) {
+                        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint);
+                        if (!features.isEmpty()) {
+                            Log.d("ONCLICK","marker clicked");
+                            Feature feature = features.get(0);
 
+                            if(feature.properties().get("Area")!=null){
+                                //Clicked on a valid marker
+                                //Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
+                                data="";
+                                StringBuilder sb = new StringBuilder();
+                                sb.append("Area: ");
+                                sb.append(feature.properties().get("Area").getAsString());
+                                sb.append("\n");
+
+                                sb.append("Bedrooms: ");
+                                sb.append(feature.properties().get("Bedroom").getAsString());
+                                sb.append("\n");
+
+                                sb.append("Bathrooms: ");
+                                sb.append(feature.properties().get("Bathroom").getAsString());
+                                sb.append("\n");
+
+                                sb.append("Road Number: ");
+                                sb.append(feature.properties().get("Road Number").getAsString());
+                                sb.append("\n");
+
+                                sb.append("Flat Size: ");
+                                sb.append(feature.properties().get("Flat Size").getAsString());
+                                sb.append("\n");
+
+                                sb.append("\nAre you Interested?");
+                                data = sb.toString();
+                                InterestedDialog dd = new InterestedDialog();
+                                dd.show(getFragmentManager(),"fk");
+
+                            }
+                            else{
+                                //Degenerate marker.
+                            }
+
+                        } else {
+                            Log.d("ONCLICK","map clicked");
+                            return false;
+                        }
+                        return true;
+                    }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
@@ -256,74 +341,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
-            private boolean handleClickIcon(PointF screenPoint) {
-                List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint);
-                if (!features.isEmpty()) {
-                    Log.d("ONCLICK","marker clicked");
-                    Feature feature = features.get(0);
-
-                    if(feature.properties().get("Area")!=null){ //Clicked on a valid marker
-                        //Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
-                        data="";
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Area: ");
-                        sb.append(feature.properties().get("Area").getAsString());
-                        sb.append("\n");
-
-                        sb.append("Bedrooms: ");
-                        sb.append(feature.properties().get("Bedroom").getAsString());
-                        sb.append("\n");
-
-                        sb.append("Bathrooms: ");
-                        sb.append(feature.properties().get("Bathroom").getAsString());
-                        sb.append("\n");
-
-                        sb.append("Road Number: ");
-                        sb.append(feature.properties().get("Road Number").getAsString());
-                        sb.append("\n");
-
-                        sb.append("Flat Size: ");
-                        sb.append(feature.properties().get("Flat Size").getAsString());
-                        sb.append("\n");
-
-                        sb.append("\nAre you Interested?");
-                        data = sb.toString();
-                        InterestedDialog dd = new InterestedDialog();
-                        dd.show(getFragmentManager(),"fk");
-
-                    }
-                    else{
-
-                    }
 
 
-                } else {
-                    Log.d("ONCLICK","map clicked");
-                    return false;
-                }
-                return true;
-            }
-
-            private void addListeners(){
-
-                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {    //Adds map click event listener.
-                    @Override
-                    public boolean onMapClick(@NonNull LatLng point) {
-                        if (handleClickIcon(mapboxMap.getProjection().toScreenLocation(point))) {
-                            //clicked on some marker
-                        } else {
-                            if (placedHousemarker) {
-                                cursorft.clear();
-                                placedHousemarker = false;
-                            }
-                            placedHousemarker = true;
-
-                        }
-                        return true;
-                    }
-                });
-
-            }
 
         });
 
