@@ -217,7 +217,12 @@ public class MainActivity extends AppCompatActivity {
             }
             */
 
-
+            private String getAttribute(DataSnapshot item, String prop){
+                if(item.child(prop).getValue()!=null){
+                    return item.child(prop).getValue().toString();
+                }
+                return "-1";
+            }
             private void loadFromDatabase(){
                 dbroot.child("House").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -225,15 +230,16 @@ public class MainActivity extends AppCompatActivity {
                         Iterator<DataSnapshot> items = dataSnapshot.getChildren().iterator();
                         while(items.hasNext()){
                             DataSnapshot item = items.next();
-                            double lat = Double.parseDouble(item.child("LAT").getValue().toString());
-                            double lng = Double.parseDouble(item.child("LONG").getValue().toString());
+                            double lat = Double.parseDouble(getAttribute(item, "LAT"));
+                            double lng = Double.parseDouble(getAttribute(item, "LONG"));
+
                             Log.d("LATLONG",lat + " " + lng);
                             Feature ft=Feature.fromGeometry(Point.fromLngLat(lng,lat));
-                            ft.properties().addProperty("Area", item.child("Area").getValue().toString()); //Add rent, area, USERID (important)
-                            ft.properties().addProperty("Flat Size", item.child("Flat Size").getValue().toString());
-                            ft.properties().addProperty("Bedroom", item.child("Bedroom").getValue().toString());
-                            ft.properties().addProperty("Bathroom", item.child("Bathroom").getValue().toString());
-                            ft.properties().addProperty("Road Number", item.child("Road Number").getValue().toString());
+                            ft.properties().addProperty("Area", getAttribute(item,"Area")); //Add rent, area, USERID (important)
+                            ft.properties().addProperty("Flat Size", getAttribute(item,"Flat Size"));
+                            ft.properties().addProperty("Bedroom", getAttribute(item,"Bedroom"));
+                            ft.properties().addProperty("Bathroom", getAttribute(item,"Bathroom"));
+                            ft.properties().addProperty("Road Number", getAttribute(item,"Road Number"));
                             HouseList.add(ft);
                         }
                         mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
