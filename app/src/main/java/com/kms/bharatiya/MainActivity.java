@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -69,24 +70,23 @@ public class MainActivity extends AppCompatActivity {
     private static final String SOURCE_ID = "SOURCE_ID";
     private static final String ICON_ID = "ICON_ID";
     private static final String LAYER_ID = "LAYER_ID";
-
+    private Point center;
 
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
 
-    private List<Feature> cursorft = new ArrayList<>();    //Contains list of houses where markers need to be placed.
     //private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
 
     //Firebase realtime DB:
     DatabaseReference dbroot = FirebaseDatabase.getInstance().getReference();
     DatabaseReference dbhouses =dbroot.child("House");
 
+    //For dealing with Cursor placement:
     private boolean placedHousemarker=false;
-
-
-
     public static LatLng currentPosition = new LatLng(64.900932, -18.167040);
     private GeoJsonSource gjs;
 
+    //For search menu:
+    SearchView searchbar;
 
     @Override
     protected void onStart() {
@@ -136,7 +136,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
+
+        center = Point.fromLngLat(90.4125,23.8103);
+        searchbar = (SearchView)findViewById(R.id.searchView);
+
         ft = findViewById(R.id.floatingActionButton);
+
+        searchbar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Submit
+                //MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
+                        //.accessToken(R.string.mapbox_access_token)
+                        //.query("1600 Pennsylvania Ave NW")
+                        //.build();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Suggest places: i.e B for banani.
+                //need to implement Arraylist, adapter,etc.
+                return false;
+            }
+        });
         ft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
