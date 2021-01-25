@@ -25,7 +25,7 @@ public class InterestedDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         StringBuilder path = new StringBuilder();
                         path.append("users/");
-                        path.append(MainActivity.whoami);
+                        path.append(MainActivity.whoishe);
                         path.append("/messages");
                         String pp=path.toString();
 

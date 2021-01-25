@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     public static String data;
     public static String whoami;
     public static String hishouseaddr;
+    public static String whoishe;
+
 
     private MapView mapView;
     private MapboxMap mapboxMap;
@@ -380,6 +382,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 sb.append("\nAre you Interested?");
                                 hishouseaddr = getAttribute(feature,"Address");
+                                whoishe = getAttribute(feature, "Email");
                                 data = sb.toString();
                                 InterestedDialog dd = new InterestedDialog();
                                 dd.show(getFragmentManager(),"fk");
