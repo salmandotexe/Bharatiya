@@ -296,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
                             ft.properties().addProperty("Bedroom", getAttribute(item,"Bedroom"));
                             ft.properties().addProperty("Bathroom", getAttribute(item,"Bathroom"));
                             ft.properties().addProperty("Rent", getAttribute(item,"Rent"));
+                            ft.properties().addProperty("Email", getAttribute(item,"Email"));
                             HouseList.add(ft);
                         }
                         mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
@@ -383,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
                                 sb.append("\nAre you Interested?");
                                 hishouseaddr = getAttribute(feature,"Address");
                                 whoishe = getAttribute(feature, "Email");
+                                Log.d("EMAIL", "passing "+ whoishe);
                                 data = sb.toString();
                                 InterestedDialog dd = new InterestedDialog();
                                 dd.show(getFragmentManager(),"fk");
