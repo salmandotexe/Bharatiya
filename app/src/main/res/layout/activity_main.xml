@@ -33,6 +33,20 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
 
+            android:id="@+id/msgbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="50dp"
+            android:clickable="true"
+            android:backgroundTint="@android:color/background_light"
+            mapbox:srcCompat="@drawable/msgicon"
+
+
+            />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+
             android:id="@+id/floatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +54,8 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="50dp"
             android:clickable="true"
-            mapbox:srcCompat="@drawable/ic_register4_foreground"
+
+            mapbox:srcCompat="@drawable/houseicon"
 
 
             />

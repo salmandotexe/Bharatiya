@@ -65,14 +65,8 @@ public class RegistrationV2 extends AppCompatActivity {
         Bundle b = iin.getExtras();
         if(b!=null)
         {
-
             int h;
-
             lj =(String) b.get("Mail");
-
-
-
-
         }
         house_area= findViewById(R.id.area);
         rent= findViewById(R.id.house_num);

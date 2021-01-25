@@ -5,8 +5,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,6 +48,8 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,7 +71,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 public class MainActivity extends AppCompatActivity {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
     public static String data;
-    public  String lk;
+    public  String whoami;
     private MapView mapView;
     private MapboxMap mapboxMap;
     public FloatingActionButton ft;
@@ -74,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
     private Point center;
 
     private List<Feature> HouseList = new ArrayList<>();    //Contains list of houses where markers need to be placed.
-
-    //private FirebaseFirestore db = FirebaseFirestore.getInstance(); //Contains Firestore database.
 
     //Firebase realtime DB:
     DatabaseReference dbroot = FirebaseDatabase.getInstance().getReference();
@@ -88,6 +94,12 @@ public class MainActivity extends AppCompatActivity {
 
     //For search menu:
     SearchView searchbar;
+
+    //For the messages
+    FloatingActionButton messagebtn;
+    ArrayList<String> messages;
+    ArrayAdapter<String> aA;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onStart() {
@@ -141,20 +153,23 @@ public class MainActivity extends AppCompatActivity {
         Bundle b = iin.getExtras();
         if(b!=null)
         {
-
             int h;
-
-            lk =(String) b.get("Mail");
-            //Toast.makeText(MainActivity.this,"Welcome " + lk, Toast.LENGTH_LONG).show();
-
-
-
+            whoami =(String) b.get("Mail");
+            Toast.makeText(MainActivity.this,"Welcome " + whoami, Toast.LENGTH_LONG).show();
         }
 
         center = Point.fromLngLat(90.4125,23.8103);
         searchbar = (SearchView)findViewById(R.id.searchView);
-
+        messagebtn =findViewById(R.id.msgbtn);
         ft = findViewById(R.id.floatingActionButton);
+        messages = new ArrayList<String>();
+        messagebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messages.clear();
+                PerformMessageQuery();
+            }
+        });
 
         searchbar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -175,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         ft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     Intent i = new Intent(MainActivity.this, RegistrationV2.class);
-                    i.putExtra("Mail",lk);
+                    i.putExtra("Mail",whoami);
                     startActivity(i);
                 }
             }
@@ -274,11 +290,11 @@ public class MainActivity extends AppCompatActivity {
 
                             Log.d("LATLONG",lat + " " + lng);
                             Feature ft=Feature.fromGeometry(Point.fromLngLat(lng,lat));
-                            ft.properties().addProperty("Area", getAttribute(item,"Area")); //Add rent, area, USERID (important)
+                            ft.properties().addProperty("Address", getAttribute(item,"Address")); //Add rent, area, USERID (important)
                             ft.properties().addProperty("Flat Size", getAttribute(item,"Flat Size"));
                             ft.properties().addProperty("Bedroom", getAttribute(item,"Bedroom"));
                             ft.properties().addProperty("Bathroom", getAttribute(item,"Bathroom"));
-                            ft.properties().addProperty("Road Number", getAttribute(item,"Road Number"));
+                            ft.properties().addProperty("Rent", getAttribute(item,"Rent"));
                             HouseList.add(ft);
                         }
                         mapboxMap.setStyle(new Style.Builder().fromUri(curstl)
@@ -337,13 +353,13 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("ONCLICK","marker clicked");
                             Feature feature = features.get(0);
 
-                            if(feature.properties().get("Area")!=null){
+                            if(feature.properties().get("Address")!=null){
                                 //Clicked on a valid marker
                                 //Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
                                 data="";
                                 StringBuilder sb = new StringBuilder();
-                                sb.append("Area: ");
-                                sb.append(feature.properties().get("Area").getAsString());
+                                sb.append("Address: ");
+                                sb.append(feature.properties().get("Address").getAsString());
                                 sb.append("\n");
 
                                 sb.append("Bedrooms: ");
@@ -354,12 +370,12 @@ public class MainActivity extends AppCompatActivity {
                                 sb.append(feature.properties().get("Bathroom").getAsString());
                                 sb.append("\n");
 
-                                sb.append("Road Number: ");
-                                sb.append(feature.properties().get("Road Number").getAsString());
-                                sb.append("\n");
-
                                 sb.append("Flat Size: ");
                                 sb.append(feature.properties().get("Flat Size").getAsString());
+                                sb.append("\n");
+
+                                sb.append("Rent: ");
+                                sb.append(feature.properties().get("Rent").getAsString());
                                 sb.append("\n");
 
                                 sb.append("\nAre you Interested?");
@@ -394,4 +410,53 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
+    private void populateItemsList() {
+        aA = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messages);
+    }
+
+    private void pf(){
+        aA = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                messages );
+    }
+    private boolean PerformMessageQuery() {
+        String str="users/"+"salman.exe@gmail.com/"+"messages";
+        db.collection(str).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot doc:task.getResult()){
+                                String msg=doc.getString("msg");
+                                Log.d("DBMSG",msg);
+                                messages.add(msg);
+                            }
+                            LayoutInflater inflater = getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.custom_toast,
+                                    (ViewGroup) findViewById(R.id.custom_toast_container));
+
+
+                            TextView tv = (TextView) layout.findViewById(R.id.msgs);
+                            StringBuilder txt = new StringBuilder();
+                            for (String s : messages){
+                                txt.append(s);
+                                txt.append("\n");
+
+                            }
+                            tv.setText(txt);
+
+                            Toast toast = new Toast(getApplicationContext());
+                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.setView(layout);
+                            toast.show();
+                        }
+                        else{
+                            Log.d("DBGETERROR","Unable to retrieve messages.");
+                        }
+                    }
+                });
+        return true;
+    }
 }
