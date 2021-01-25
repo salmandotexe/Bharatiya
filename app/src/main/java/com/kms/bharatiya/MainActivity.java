@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,20 +25,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.JsonElement;
-import com.mapbox.android.gestures.AndroidGesturesManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.geojson.GeoJson;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -48,15 +40,11 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -70,8 +58,12 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 public class MainActivity extends AppCompatActivity {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
+
+    //For messaging part
     public static String data;
-    public  String whoami;
+    public static String whoami;
+    public static String hishouseaddr;
+
     private MapView mapView;
     private MapboxMap mapboxMap;
     public FloatingActionButton ft;
@@ -85,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Firebase realtime DB:
     DatabaseReference dbroot = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference dbhouses =dbroot.child("House");
+    //DatabaseReference dbhouses =dbroot.child("House");
 
     //For dealing with Cursor placement:
     private boolean placedHousemarker=false;
@@ -278,6 +270,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return "-1";
             }
+
+            private String getAttribute(Feature ft, String prop){
+                if(ft.properties().get(prop)!=null){
+                    return ft.properties().get(prop).getAsString();
+                }
+                return  "<<no field exists>>";
+            }
             private void loadFromDatabase(){
                 dbroot.child("House").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -357,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
                                 //Clicked on a valid marker
                                 //Toast.makeText(MainActivity.this,feature.properties().toString(), Toast.LENGTH_LONG).show();
                                 data="";
+
                                 StringBuilder sb = new StringBuilder();
                                 sb.append("Address: ");
                                 sb.append(feature.properties().get("Address").getAsString());
@@ -379,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
                                 sb.append("\n");
 
                                 sb.append("\nAre you Interested?");
+                                hishouseaddr = getAttribute(feature,"Address");
                                 data = sb.toString();
                                 InterestedDialog dd = new InterestedDialog();
                                 dd.show(getFragmentManager(),"fk");
@@ -409,20 +410,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        }
+}
 
-    private void populateItemsList() {
-        aA = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messages);
-    }
-
-    private void pf(){
-        aA = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                messages );
-    }
     private boolean PerformMessageQuery() {
-        String str="users/"+"salman.exe@gmail.com/"+"messages";
+        String str="users/"+whoami+"/messages";
         db.collection(str).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -443,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
                             for (String s : messages){
                                 txt.append(s);
                                 txt.append("\n");
-
+                                txt.append("\n");
                             }
                             tv.setText(txt);
 
@@ -454,6 +445,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else{
                             Log.d("DBGETERROR","Unable to retrieve messages.");
+                            Map<String,Object> msg = new HashMap<>();
+                            msg.put("temp","errored once");
+                            db.collection("users").document(whoami).set(msg);
                         }
                     }
                 });

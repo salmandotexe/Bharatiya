@@ -21,6 +21,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firestore.v1.WriteResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Signup extends AppCompatActivity {
     EditText First;
@@ -52,6 +57,8 @@ public class Signup extends AppCompatActivity {
     DatabaseReference conref2;
     DatabaseReference conref3;
     DatabaseReference conref4;
+
+    private FirebaseFirestore fdb = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +109,13 @@ public class Signup extends AppCompatActivity {
                         p.setTitle("Signing Up");
                         p.setMessage("Seconds to Goodness");
                         p.show();
+
+                        //Firebase part start
+                        Map<String,Object> msg = new HashMap<>();
+                        msg.put("temp","temp");
+                        fdb.collection("users").document(Email.getText().toString()).set(msg);
+                        //Firebase part end.
+
                         auth.createUserWithEmailAndPassword(Email.getText().toString(),Pass.getText().toString())
                                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
