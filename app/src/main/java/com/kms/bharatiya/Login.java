@@ -24,6 +24,7 @@ public class Login extends AppCompatActivity {
     Button b2;
     EditText email;
     EditText pass;
+    String v1;
     FirebaseAuth auth;
     DatabaseReference rootref = FirebaseDatabase.getInstance().getReference();
     DatabaseReference rootref1= rootref.child("Status");
@@ -38,6 +39,8 @@ public class Login extends AppCompatActivity {
         b2 = findViewById(R.id.button2);
         email= findViewById(R.id.editText);
         pass= findViewById(R.id.editText3);
+        v1 = email.getText().toString();
+
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,6 +74,7 @@ public class Login extends AppCompatActivity {
                                     {
 
                                         Intent i = new Intent(Login.this,MainActivity.class);
+                                        i.putExtra("Mail",email.getText().toString());
                                         startActivity(i);
 
 

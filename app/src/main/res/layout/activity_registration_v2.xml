@@ -39,7 +39,7 @@
             android:layout_weight="1"
             android:background="@drawable/shape"
             android:ems="10"
-            android:hint="Area"
+            android:hint="Address"
             android:inputType="textPersonName"
             android:paddingLeft="20dp"
             android:textColorHint="#000"
@@ -60,24 +60,11 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/shape"
         android:ems="10"
-        android:hint="House Number"
+        android:hint="Rent"
         android:inputType="textEmailAddress"
         android:paddingLeft="20dp"
         android:textColorHint="#000" />
 
-    <EditText
-        android:id="@+id/road_num"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/shape"
-        android:ems="10"
-        android:hint="Road Number"
-        android:inputType="textEmailAddress"
-        android:paddingLeft="20dp"
-        android:textColorHint="#000" />
 
 
     <EditText

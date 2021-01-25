@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class RegistrationV2 extends AppCompatActivity {
-    private EditText house_area, housenum, roadnum, flatsize, floorr, bed, bath;
+    private EditText house_area, rent, flatsize, floorr, bed, bath;
     private ImageButton upload, takepic;
     private Button registerbutton;
     private TextView regi, disclaimer;
@@ -48,20 +49,34 @@ public class RegistrationV2 extends AppCompatActivity {
     DatabaseReference conref8;
     DatabaseReference conref9;
     String harea ;
-    String hnum ;
-    String rnum;
+    String em ;
+    String rnt;
     String fsize;
     String floor;
     String nbed ;
     String nbath ;
+    String lj ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_v2);
+        Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+        if(b!=null)
+        {
+
+            int h;
+
+            lj =(String) b.get("Mail");
+
+
+
+
+        }
         house_area= findViewById(R.id.area);
-        housenum= findViewById(R.id.house_num);
-        roadnum= findViewById(R.id.road_num);
+        rent= findViewById(R.id.house_num);
+        //roadnum= findViewById(R.id.road_num);
         flatsize= findViewById(R.id.flat_size);
         floorr= findViewById(R.id.floor);
         bed= findViewById(R.id.bedroom);
@@ -96,8 +111,8 @@ public class RegistrationV2 extends AppCompatActivity {
             public void onClick(View v) {
 
                 harea = house_area.getText().toString();
-                hnum = housenum.getText().toString();
-                rnum = roadnum.getText().toString();
+                rnt = rent.getText().toString();
+                //rnum = roadnum.getText().toString();
                 fsize = flatsize.getText().toString();
                 floor = floorr.getText().toString();
                 nbed = bed.getText().toString();
@@ -106,15 +121,17 @@ public class RegistrationV2 extends AppCompatActivity {
                 lon = MainActivity.currentPosition.getLongitude();
 
 
+                em = lj;
 
 
                 rootref1= rootref2.child(num2);
-                conref1 = rootref1.child("Area");
+                conref1 = rootref1.child("Address");
                 conref1.setValue(harea);
-                conref2 = rootref1.child("House Number ");
-                conref2.setValue(hnum);
-                conref3 = rootref1.child("Road Number");
-                conref3.setValue(rnum);
+                conref2 = rootref1.child("Rent");
+                conref2.setValue(rnt);
+
+                conref3 = rootref1.child("Email");
+                conref3.setValue(em);
                 conref4 = rootref1.child("Flat Size");
                 conref4.setValue(fsize);
                 conref5 = rootref1.child("Floor");

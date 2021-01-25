@@ -63,6 +63,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 public class MainActivity extends AppCompatActivity {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
     public static String data;
+    public  String lk;
     private MapView mapView;
     private MapboxMap mapboxMap;
     public FloatingActionButton ft;
@@ -136,6 +137,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
+        Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+        if(b!=null)
+        {
+
+            int h;
+
+            lk =(String) b.get("Mail");
+            //Toast.makeText(MainActivity.this,"Welcome " + lk, Toast.LENGTH_LONG).show();
+
+
+
+        }
 
         center = Point.fromLngLat(90.4125,23.8103);
         searchbar = (SearchView)findViewById(R.id.searchView);
@@ -169,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     Intent i = new Intent(MainActivity.this, RegistrationV2.class);
+                    i.putExtra("Mail",lk);
                     startActivity(i);
                 }
             }

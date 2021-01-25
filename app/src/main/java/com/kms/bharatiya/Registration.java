@@ -85,7 +85,7 @@ public class Registration extends AppCompatActivity {
     public void setupUIViews(){
         house_area= (EditText)findViewById(R.id.area);
         housenum= (EditText)findViewById(R.id.house_num);
-        roadnum= (EditText)findViewById(R.id.road_num);
+        //roadnum= (EditText)findViewById(R.id.road_num);
         flatsize= (EditText)findViewById(R.id.flat_size);
         floorr= (EditText)findViewById(R.id.floor);
         bed= (EditText)findViewById(R.id.bedroom);
