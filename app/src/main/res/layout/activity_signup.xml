@@ -8,6 +8,13 @@
     android:orientation="vertical"
     tools:context=".Signup"
     android:background="#5A7590">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
+        android:layout_height="254dp"
+        android:src="@drawable/tiyalast" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -130,15 +137,14 @@
     <Button
         android:id="@+id/bottol"
         android:layout_width="200dp"
-        android:layout_height="80dp"
-        android:text="Sign Up"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/box"
-        android:textColor="#ffffff"
-        />
+        android:text="Sign Up"
+        android:textColor="#ffffff" />
 
 </LinearLayout>
