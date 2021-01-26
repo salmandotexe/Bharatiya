@@ -61,7 +61,7 @@ public class Login extends AppCompatActivity {
                 else
                 {
                     ProgressDialog p = new ProgressDialog(Login.this);
-                    p.setTitle("Loging in");
+                    p.setTitle("Logging in");
                     p.setMessage("Seconds to Goodness");
                     p.show();
 
