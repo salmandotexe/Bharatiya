@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     //For the messages
     FloatingActionButton messagebtn;
-    ArrayList<String> messages;
+    public static ArrayList<String> messages;
     ArrayAdapter<String> aA;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -429,24 +431,18 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("DBMSG",msg);
                                 messages.add(msg);
                             }
-                            LayoutInflater inflater = getLayoutInflater();
-                            View layout = inflater.inflate(R.layout.custom_toast,
-                                    (ViewGroup) findViewById(R.id.custom_toast_container));
 
-
-                            TextView tv = (TextView) layout.findViewById(R.id.msgs);
                             StringBuilder txt = new StringBuilder();
                             for (String s : messages){
                                 txt.append(s);
                                 txt.append("\n");
                                 txt.append("\n");
                             }
-                            tv.setText(txt);
-
-                            Toast toast = new Toast(getApplicationContext());
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.setView(layout);
-                            toast.show();
+                            LayoutInflater inflater = getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.activity_notificationform,
+                                    (ViewGroup) findViewById(R.id.msgcontainer));
+                            NotificationForm nf = new NotificationForm();
+                            nf.show(getSupportFragmentManager(),"dialog");
                         }
                         else{
                             Log.d("DBGETERROR","Unable to retrieve messages.");
