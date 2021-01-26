@@ -39,7 +39,7 @@
             android:layout_marginTop="100dp"
             android:clickable="true"
             android:backgroundTint="@android:color/background_light"
-            mapbox:srcCompat="@drawable/msgicon"
+            mapbox:srcCompat="@drawable/b3"
             />
         <com.google.android.material.floatingactionbutton.FloatingActionButton
 
