@@ -58,9 +58,11 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 //Java imports:
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FilterDialog.filterdialoglistener {
     private String curstl= "mapbox://styles/thesalmansahel/ckh50xh0w00se19pfe4krhrxa";
-
+    public interface filterdialoglistener{
+        void Getvals(double val1, double val2);
+    }
     //For messaging part
     public static String data;
     public static String whoami;
@@ -94,9 +96,11 @@ public class MainActivity extends AppCompatActivity {
     //For the messages
     FloatingActionButton messagebtn;
     public static ArrayList<String> messages;
-    ArrayAdapter<String> aA;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    //For the Filter part
+    public static List<Feature> filterlist = new ArrayList<>();
+    FloatingActionButton filterbtn;
     @Override
     protected void onStart() {
 
@@ -139,6 +143,19 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         mapView.onDestroy();
     }
+    private String getAttribute(DataSnapshot item, String prop){
+        if(item.child(prop).getValue()!=null){
+            return item.child(prop).getValue().toString();
+        }
+        return "-1";
+    }
+
+    private String getAttribute(Feature ft, String prop){
+        if(ft.properties().get(prop)!=null){
+            return ft.properties().get(prop).getAsString();
+        }
+        return  "<<no field exists>>";
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +175,16 @@ public class MainActivity extends AppCompatActivity {
         searchbar = (SearchView)findViewById(R.id.searchView);
         messagebtn =findViewById(R.id.msgbtn);
         ft = findViewById(R.id.floatingActionButton);
+        filterbtn=findViewById(R.id.filterbtn);
         messages = new ArrayList<String>();
+        filterlist= new ArrayList<>();
+
+        filterbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openfilterdialog();
+            }
+        });
         messagebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,19 +294,7 @@ public class MainActivity extends AppCompatActivity {
             }
             */
 
-            private String getAttribute(DataSnapshot item, String prop){
-                if(item.child(prop).getValue()!=null){
-                    return item.child(prop).getValue().toString();
-                }
-                return "-1";
-            }
 
-            private String getAttribute(Feature ft, String prop){
-                if(ft.properties().get(prop)!=null){
-                    return ft.properties().get(prop).getAsString();
-                }
-                return  "<<no field exists>>";
-            }
             private void loadFromDatabase(){
                 dbroot.child("House").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -418,6 +432,43 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+
+    private void openfilterdialog() {
+        FilterDialog fd = new FilterDialog();
+        fd.show(getSupportFragmentManager(),"example");
+    }
+
+    private boolean isDouble(String s){
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return  false;
+        }
+    }
+    private double eps=1e-8;
+
+    @Override
+    public void Getvals(double v1, double v2){
+        filterlist=new ArrayList<>();
+        if(v1>v2) return;
+        Log.d("PARSER","v1= "+v1 + " v2= "+v2 );
+        for (Feature ft : HouseList){
+            if(isDouble(getAttribute(ft,"Rent"))){
+                double rent=-1;
+                rent = Double.parseDouble(getAttribute(ft,"Rent"));
+                Log.d("PARSER",""+rent);
+
+                if(rent<eps) continue;
+                if(v1-eps<=rent && rent <=v2+eps) filterlist.add(ft);
+            }
+        }
+        Log.d("PARSER",filterlist.toString());
+        Intent i = new Intent(MainActivity.this, FilteredMap.class);
+        startActivity(i);
+        return;
+    }
+
 
     private boolean PerformMessageQuery() {
         String str="users/"+whoami+"/messages";

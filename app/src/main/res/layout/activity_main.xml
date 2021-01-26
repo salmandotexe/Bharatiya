@@ -30,7 +30,17 @@
             mapbox:layout_constraintStart_toStartOf="parent"
             mapbox:layout_constraintTop_toTopOf="parent">
         </SearchView>
-
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/filterbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="100dp"
+            android:clickable="true"
+            android:backgroundTint="@android:color/background_light"
+            mapbox:srcCompat="@drawable/msgicon"
+            />
         <com.google.android.material.floatingactionbutton.FloatingActionButton
 
             android:id="@+id/msgbtn"
