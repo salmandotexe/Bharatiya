@@ -4,8 +4,8 @@
 **Bharatiya** is a Native Android Application that connects House Renters with Buyers/Rentees. Unlike traditional List based websites however, our App displays real-time listings on a Map, featuring a built-in filtering and notification system, authentication.
 
 
-![image](https://user-images.githubusercontent.com/29581454/167289115-f56ccba4-209f-44b3-a78a-45c2c30dbc9c.png)
- ![image](https://user-images.githubusercontent.com/29581454/167288192-6aea6f3c-638a-4e23-ae8c-4faa95ac8ff9.png) 
+<img src= "https://user-images.githubusercontent.com/29581454/167289115-f56ccba4-209f-44b3-a78a-45c2c30dbc9c.png"  width="400"></img>
+ <img src= "https://user-images.githubusercontent.com/29581454/167288192-6aea6f3c-638a-4e23-ae8c-4faa95ac8ff9.png"  width="400"></img>
 
 
 
